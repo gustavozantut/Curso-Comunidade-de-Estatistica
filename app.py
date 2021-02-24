@@ -22,7 +22,9 @@ app.layout = html.Div(
         html.H1("Análise microdados ENADE 2017"),
         html.Div(
             [
+
                 html.P(["Graph options:", dcc.Dropdown(id="graph_options", options=graph_options)])
+
             ],
             style={"width": "25%", "float": "topleft"},
         ),
@@ -45,8 +47,30 @@ app.layout = html.Div(
     ]
 )
 
+@app.callback(
+    dash.dependencies.Output('hist_functions', 'options'),
+    [dash.dependencies.Input('graph_options', 'value')]
+)           
+def update_aggregation_function_dropdown(graph):
+    if graph == "histogram":
+        return [dict(label=x, value=x) for x in ["count","sum","avg","min","max"]]
+    else:
+        return [dict(label=x, value=x) for x in [""]]
+
+@app.callback(
+    dash.dependencies.Output('size', 'options'),
+    [dash.dependencies.Input('graph_options', 'value')]
+)           
+def update_size_dropdown(graph):
+    if graph == "scatterplot":
+        return [dict(label=x, value=x) for x in df.columns]
+    else:
+        return [dict(label=x, value=x) for x in [""]]
+
+
 @app.callback(Output("graph", "figure"), [Input(d, "value") for d in (dimensions+["graph_options"]+["hist_functions"])])
 def make_figure(x, y, color, facet_col, facet_row,size,graph, hist_function):
+
     if graph == "scatterplot":
         try:
             return px.scatter(
@@ -91,4 +115,7 @@ def make_figure(x, y, color, facet_col, facet_row,size,graph, hist_function):
             return null
 
 
-app.run_server(host='0.0.0.0',debug=True, use_reloader=False,dev_tools_ui=False)
+app.run_server(host='0.0.0.0',debug=True
+    , use_reloader=False
+    ,dev_tools_ui=False
+    )
