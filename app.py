@@ -6,7 +6,7 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 
 
-df = pandas.read_csv("train.csv")
+df = pandas.read_csv("df_tratado.csv")
 col_options = [dict(label=x, value=x) for x in df.columns]
 dimensions = ["x", "y", "color", "facet_col", "facet_row","size"]
 graph_options = [dict(label=x, value=x) for x in ["scatterplot","boxplot","histogram"]]
@@ -48,41 +48,47 @@ app.layout = html.Div(
 @app.callback(Output("graph", "figure"), [Input(d, "value") for d in (dimensions+["graph_options"]+["hist_functions"])])
 def make_figure(x, y, color, facet_col, facet_row,size,graph, hist_function):
     if graph == "scatterplot":
-        hist_functions = ""
-        return px.scatter(
-            df,
-            x=x,
-            y=y,
-            color=color,
-            facet_col=facet_col,
-            facet_row=facet_row,
-            size=size,
-            height=700,
-        )
+        try:
+            return px.scatter(
+                df,
+                x=x,
+                y=y,
+                color=color,
+                facet_col=facet_col,
+                facet_row=facet_row,
+                size=size,
+                height=700,
+            )
+        except:
+            return null
     elif graph == "boxplot":
-        hist_functions = ""
-        return px.box(
-            df,
-            x=x,
-            y=y,
-            color=color,
-            facet_col=facet_col,
-            facet_row=facet_row,
-            height=700,
-        )
+        try:
+            return px.box(
+                df,
+                x=x,
+                y=y,
+                color=color,
+                facet_col=facet_col,
+                facet_row=facet_row,
+                height=700,
+            )
+        except:
+            return null
     else :
-        hist_functions = [dict(label=x, value=x) for x in ["count","sum","avg","min","max"]]
-        return px.histogram(
-            df,
-            x=x,
-            y=y,
-            color=color,
-            facet_col=facet_col,
-            facet_row=facet_row,
-            histfunc=hist_function,
-            height=700,
-            
-        )
+         try:
+            return px.histogram(
+                df,
+                x=x,
+                y=y,
+                color=color,
+                facet_col=facet_col,
+                facet_row=facet_row,
+                histfunc=hist_function,
+                height=700,
+                
+            )
+         except:
+            return null
 
 
 app.run_server(host='0.0.0.0',debug=True, use_reloader=False,dev_tools_ui=False)
