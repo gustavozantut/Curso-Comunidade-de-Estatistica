@@ -6,9 +6,9 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 
 
-df = pandas.read_csv("df_tratado.csv")
+df = pandas.read_csv("train.csv")
 col_options = [dict(label=x, value=x) for x in df.columns]
-dimensions = ["x", "y", "color", "facet_col", "facet_row"]
+dimensions = ["x", "y", "color", "facet_col", "facet_row","size"]
 graph_options = [dict(label=x, value=x) for x in ["scatterplot","boxplot","histogram"]]
 hist_functions = [dict(label=x, value=x) for x in ["count","sum","avg","min","max"]]
 
@@ -46,7 +46,7 @@ app.layout = html.Div(
 )
 
 @app.callback(Output("graph", "figure"), [Input(d, "value") for d in (dimensions+["graph_options"]+["hist_functions"])])
-def make_figure(x, y, color, facet_col, facet_row,graph, hist_function):
+def make_figure(x, y, color, facet_col, facet_row,size,graph, hist_function):
     if graph == "scatterplot":
         hist_functions = ""
         return px.scatter(
@@ -56,6 +56,7 @@ def make_figure(x, y, color, facet_col, facet_row,graph, hist_function):
             color=color,
             facet_col=facet_col,
             facet_row=facet_row,
+            size=size,
             height=700,
         )
     elif graph == "boxplot":
